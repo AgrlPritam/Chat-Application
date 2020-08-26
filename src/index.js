@@ -19,11 +19,20 @@ io.on('connection',(socket) => {
     console.log('New WebSocket connection')
 
     socket.emit('message','Welcome!!')
-    socket.on('sendMessage',(msg) => {
+    socket.broadcast.emit('message','A new User has Joined')
+    
+    socket.on('sendMessage',(msg, callback) => {
         io.emit('message',msg)
+        callback('Sent')
+    })
+
+    socket.on('sendLocation', (coords) => {
+        io.emit('message',`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
+    })
+    socket.on('disconnect',() => {
+        io.emit('message', 'A user has left')
     })
 })
-
 
 //For reference. Linked to chat.js in public folder
 //     socket.emit('countUpdated', count)
