@@ -10,6 +10,7 @@ const $messages = document.querySelector('#messages')
 //Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 //options
 const { username, room } = Qs.parse(location.search, {ignoreQueryPrefix:true})             //For client-side scripting endpoints like username and room name which we enter in index.html page. ignoreQueryPrefix will remove '?' from beginning
@@ -32,6 +33,13 @@ socket.on('locationMessage', (message) => {
         createdAt: moment(message.createdAt).format('h:mm a')
     })
     $messages.insertAdjacentHTML('beforeend',html)
+})
+socket.on('roomData', ({room, users}) => {
+    const html = Mustache.render(sidebarTemplate, {
+        room,
+        users
+    })
+    document.querySelector('#sidebar').innerHTML = html
 })
 
 $messageform.addEventListener('submit', (e) => {
