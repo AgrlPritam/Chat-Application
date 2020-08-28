@@ -11,6 +11,9 @@ const $messages = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 
+//options
+const { username, room } = Qs.parse(location.search, {ignoreQueryPrefix:true})             //For client-side scripting endpoints like username and room name which we enter in index.html page. ignoreQueryPrefix will remove '?' from beginning
+
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate,{
@@ -78,3 +81,5 @@ $locationButton.addEventListener('click',() => {
         })
     })
 })
+
+socket.emit('join', {username, room })

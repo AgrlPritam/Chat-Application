@@ -14,14 +14,25 @@ const port = process.env.PORT || 3000
 
 app.use(express.static(publicDirectoryPath))
 
+//socket.emit --> sends emit to specific client
+//io.emit --> sends emit to every connected client
+//socket.broadcast.emit --> sends emit to every client except the current one
+//io.to.emit --> sends emit to all in a specific room
+//socket.broadcast.to.emit --> sends emit to everyone except the specific client in a specific room
 
 // server (emits) --> client (receives) - countUpdated
 //client (emits) --> server (receives) - increment
 io.on('connection',(socket) => {
     console.log('New WebSocket connection')
 
-    socket.emit('message',generateMessage('Welcome!!'))
-    socket.broadcast.emit('message',generateMessage('A new User has Joined'))
+    socket.on('join',({username, room }) => {
+        socket.join(room)           //socket.join can only be used from server side
+        
+        socket.emit('message',generateMessage('Welcome!!'))
+        socket.broadcast.to(room).emit('message',generateMessage(`${username} has joined!`))
+
+    })
+
 
     socket.on('sendMessage',(msg, callback) => {        //callback here is for acknowledgement of sent message
         const filter = new Filter()
